@@ -1,0 +1,13 @@
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.venv/
+*.pyc
+node_modules/
+.DS_Store
+.env
+
+# Ignore real/large datasets, but keep the small sample so the app runs out of the box.
+data/*
+!data/generate_sample_data.py
+!data/TestPuc-Rio.csv
