@@ -1,0 +1,29 @@
+Tipos de Operação, Rotas e Transportadoras
+
+Tipos de Operação
+ZVPA significa Venda a Cliente (Sales to Customer): movimentações em que a
+mercadoria é vendida e enviada a um cliente final.
+ZTPA significa Transferência entre Centros de Distribuição (Transfer between DCs):
+movimentações internas entre depósitos da própria empresa, sem venda.
+
+Rota
+A rota é definida pela combinação de origem e destino. A origem corresponde à
+coluna "Cidade Emitente" e o destino corresponde à coluna "Cidade". Assim, a rota
+é escrita como "Origem - Destino", por exemplo "Jundiai - Sao Paulo".
+
+Código de Itinerário
+O Código de Itinerário ("Código Itinerário") é um identificador curto da rota,
+por exemplo "JUN-SAO" para a rota Jundiai - Sao Paulo.
+
+Transportadora
+A transportadora é a empresa responsável pelo transporte, identificada pelo código
+numérico na coluna "Cod. Transportadora". As análises podem ser filtradas por uma
+ou mais transportadoras para comparar desempenho e custo.
+
+Cliente
+O cliente é identificado na coluna "CLIENTE", por exemplo "IL257 - JA". A taxa de
+frete pode ser calculada para um cliente específico aplicando esse filtro.
+
+UF de origem e destino
+As colunas "UF Emitente" e "UF" indicam os estados de origem e destino,
+respectivamente, úteis para análises regionais.

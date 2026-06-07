@@ -17,4 +17,12 @@ nbformat==5.10.4
 streamlit==1.43.2
 gradio
 
+# --- RAG (chatbot de FAQ) — modelos open-source/gratuitos, sem APIs pagas ---
+# transformers fixado na linha 4.x: a 5.x removeu a task "text2text-generation" do flan-t5.
+faiss-cpu
+transformers==4.46.3
+sentence-transformers==3.3.1
+langchain-huggingface==0.1.2
+torch
+
 # pysqlite3-binary==0.6.4

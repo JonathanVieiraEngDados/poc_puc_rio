@@ -1,0 +1,37 @@
+Perguntas Frequentes (FAQ) de Logística
+
+Pergunta: O que significa o evento ENTREGA?
+Resposta: ENTREGA é o evento que representa a entrega da carga ao destinatário. O
+peso líquido das entregas é usado como denominador no cálculo das taxas R$/KG.
+
+Pergunta: Como a taxa de frete é calculada?
+Resposta: A taxa de um evento é a soma do "Vr Frete Contab Prev" daquele evento
+dividida pela soma do peso líquido dos eventos ENTREGA. O resultado é dado em
+reais por quilograma (R$/KG).
+
+Pergunta: Qual a diferença entre ZVPA e ZTPA?
+Resposta: ZVPA é venda a cliente (a mercadoria vai para um cliente final). ZTPA é
+transferência entre centros de distribuição da própria empresa, sem venda.
+
+Pergunta: O que é uma reentrega e por que ela importa?
+Resposta: A reentrega acontece quando a primeira tentativa de entrega falha e a
+carga precisa ser entregue de novo. Ela gera custo extra e é um indicador de
+ineficiência logística.
+
+Pergunta: O que são os Top ofensores?
+Resposta: São os itens (clientes, transportadoras, rotas ou cidades) que
+concentram os maiores custos de frete. Os Top 5 ofensores são os cinco de maior
+custo.
+
+Pergunta: O que é uma diária e o que é uma diária de carreta?
+Resposta: A diária é a cobrança por tempo de espera ou permanência do veículo
+além do previsto. A diária de carreta (DIARIA - CARRET) é a diária específica
+para veículos do tipo carreta.
+
+Pergunta: Como é definida uma rota?
+Resposta: A rota é a combinação de origem (Cidade Emitente) e destino (Cidade),
+escrita como "Origem - Destino", por exemplo "Jundiai - Sao Paulo".
+
+Pergunta: Posso calcular a taxa só para um cliente ou uma transportadora?
+Resposta: Sim. As taxas e custos podem ser filtrados por cliente, transportadora,
+rota, tipo de operação e intervalo de datas.

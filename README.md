@@ -1,97 +1,118 @@
-# PUC-Rio AI Chatbot
+# PUC-Rio AI Chatbot — Logística
 
-Assistente de análise logística com IA. Interface de chat em **Gradio** sobre um
-agente **LangChain + OpenAI Functions** (`create_csv_agent`) que usa ferramentas
-analíticas sobre um dataset local de eventos logísticos.
+Chatbot de **FAQ de logística** com **RAG (Retrieval-Augmented Generation)** usando
+**LangChain + FAISS** e **modelos open-source gratuitos da Hugging Face**
+(`sentence-transformers/all-MiniLM-L6-v2` para embeddings e `google/flan-t5-base`
+para geração). **Não usa nenhuma API paga** — tudo roda localmente.
+
+Para perguntas numéricas (taxa R$/KG, top ofensores, datas) o chatbot reaproveita
+as **tools analíticas** sobre o dataset CSV; para perguntas conceituais/FAQ ele usa
+o pipeline RAG sobre um corpus de documentos `.txt`.
+
+> Há também uma interface Gradio legada que usa a API da OpenAI
+> (`app/ui/gradio_app.py`) — **opcional** e fora do escopo dos requisitos (que
+> proíbem APIs pagas). O entregável principal é o chatbot RAG (`app/chat.py`).
+
+## Como os requisitos são atendidos
+
+| Requisito | Onde |
+|---|---|
+| Corpus local de arquivos `.txt` | `data/corpus/*.txt` (conceitos, eventos, operações, glossário, FAQ) |
+| RAG — Indexação com **FAISS** + `all-MiniLM-L6-v2` | `app/rag/indexer.py` |
+| RAG — Recuperação dos trechos relevantes | `app/rag/pipeline.py` (FAISS retriever) |
+| RAG — Geração com `flan-t5-base` (HF, gratuito) | `app/rag/pipeline.py` (`HuggingFacePipeline`) |
+| Sem APIs pagas (só local / HF gratuito) | embeddings + LLM rodam localmente |
+| Interface simples de terminal | `app/chat.py` (`python -m app.chat`) |
+| **Bônus:** LangChain | `create_retrieval_chain` + `create_stuff_documents_chain` |
+| **Bônus:** histórico de perguntas/respostas | salvo em `data/history/qa_history.jsonl` |
+| Reaproveitamento das tools (domínio logística) | `app/rag/tools_router.py` + `app/tools/` |
 
 ## Estrutura do projeto
 
 ```
 poc_puc-rio-main/
 ├── app/
-│   ├── agent/
-│   │   └── logistics_agent.py        # Orquestra LLM + tools (create_csv_agent)
-│   ├── config/
-│   │   └── rules.py                  # Regras do agente (system prompt: RULES)
-│   ├── dataPrep/
-│   │   └── dataset_repository.py     # Carrega e trata o CSV
-│   ├── tools/
-│   │   ├── parse_route_tool.py       # Extrai origem/destino de texto livre
-│   │   ├── main_rate_tool.py         # Calcula taxa R$/KG por evento
-│   │   ├── top_offenders_tool.py     # Top N ofensores de custo
-│   │   ├── get_available_dates_tool.py
-│   │   └── math_operator_tools.py    # Operações matemáticas auxiliares
-│   └── ui/
-│       └── gradio_app.py             # Interface de chat (Gradio) — entry point
+│   ├── chat.py                       # >>> Chatbot RAG (interface de terminal) — entry point
+│   ├── rag/
+│   │   ├── indexer.py                # Indexação: corpus .txt -> embeddings -> FAISS
+│   │   ├── pipeline.py               # Recuperação (FAISS) + Geração (flan-t5) com LangChain
+│   │   └── tools_router.py           # Roteia perguntas numéricas para as tools (CSV)
+│   ├── tools/                        # Tools analíticas (taxa, top ofensores, rota, datas, math)
+│   ├── dataPrep/dataset_repository.py# Carrega e trata o CSV
+│   ├── config/rules.py               # Regras de negócio do domínio
+│   ├── agent/logistics_agent.py      # (legado) agente OpenAI sobre CSV
+│   └── ui/gradio_app.py              # (legado/opcional) UI Gradio com OpenAI
 ├── data/
-│   ├── generate_sample_data.py       # Gera um dataset de exemplo
-│   └── TestPuc-Rio.csv                   # Dataset (exemplo gerado / ou o seu real)
+│   ├── corpus/*.txt                  # Corpus de conhecimento (base do RAG)
+│   ├── TestPuc-Rio.csv               # Dataset tabular (usado pelas tools)
+│   ├── generate_sample_data.py       # Gerador do dataset de exemplo
+│   ├── faiss_index/                  # Índice FAISS gerado (ignorado no git)
+│   └── history/qa_history.jsonl      # Histórico de Q&A (ignorado no git)
 ├── requirements.txt
-├── .env.example
 └── README.md
 ```
 
 ## Pré-requisitos
 
 - Python **3.12** (ver `.python-version`)
-- Uma chave de API da OpenAI
+- Acesso à internet **na primeira execução** (para baixar os modelos gratuitos da
+  Hugging Face; depois rodam offline a partir do cache local)
 
-## Como executar
+## Como executar (chatbot RAG)
 
 ```bash
-# 1) (recomendado) criar e ativar um ambiente virtual
+# 1) ambiente virtual + dependências
 python -m venv .venv
-source .venv/bin/activate          # Windows: .venv\Scripts\activate
-
-# 2) instalar as dependências
+source .venv/bin/activate            # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 
-# 3) configurar a chave da OpenAI
-cp .env.example .env
-# edite .env e preencha OPENAI_API_KEY=sk-...
+# 2) (opcional) construir o índice FAISS antecipadamente
+#    Se você pular, o índice é criado automaticamente na 1ª pergunta de RAG.
+python -m app.rag.indexer
 
-# 4) (opcional) gerar o dataset de exemplo, caso queira recriá-lo
-python data/generate_sample_data.py
-
-# 5) iniciar a interface
-python -m app.ui.gradio_app
+# 3) iniciar o chatbot no terminal
+python -m app.chat
 ```
 
-A UI abre em **http://127.0.0.1:7860**. Inclui histórico de conversa, exemplos de
-perguntas e botões de Enviar/Limpar.
+Exemplos de perguntas:
 
-> Execute sempre a partir da **raiz do repositório** (`poc_puc-rio-main/`), pois o
-> entry point usa o pacote `app` (`python -m app.ui.gradio_app`).
+- `O que significa o evento ENTREGA?` → **RAG**
+- `Como a taxa de frete R$/KG é calculada?` → **RAG**
+- `Qual a diferença entre ZVPA e ZTPA?` → **RAG**
+- `Quais os Top 5 ofensores do evento ENTREGA?` → **tools (CSV)**
+- `Qual a taxa de ENTREGA do cliente IL257 - JA?` → **tools (CSV)**
 
-## Dados
+Digite `sair` para encerrar. Cada interação é gravada em
+`data/history/qa_history.jsonl`.
 
-Por padrão a aplicação usa o dataset de exemplo em `data/TestPuc-Rio.csv`, gerado por
-`data/generate_sample_data.py` e já cobrindo os prompts de exemplo da UI. Para usar
-o seu próprio CSV, defina a variável de ambiente `DATASET_CSV` (veja `.env.example`)
-ou substitua o arquivo. O esquema esperado de colunas está documentado em
-`app/config/rules.py` (Evento, Qt Peso Líquido (kg), Vr Frete Contab Prev, CLIENTE,
-Cod. Transportadora, Cidade Emitente, Cidade, Data Emissão, etc.).
+> Execute sempre a partir da **raiz do repositório** (`poc_puc-rio-main/`), pois os
+> entry points usam o pacote `app` (`python -m app.chat`).
+
+## Como funciona o RAG
+
+1. **Indexação** (`app/rag/indexer.py`): lê `data/corpus/*.txt`, divide em trechos
+   com `RecursiveCharacterTextSplitter`, gera embeddings com
+   `sentence-transformers/all-MiniLM-L6-v2` e salva um índice **FAISS** em
+   `data/faiss_index/`.
+2. **Recuperação** (`app/rag/pipeline.py`): a pergunta vira embedding e o FAISS
+   retorna os `k` trechos mais similares.
+3. **Geração** (`app/rag/pipeline.py`): `google/flan-t5-base` (via
+   `HuggingFacePipeline`) responde usando **apenas** os trechos recuperados,
+   orquestrado pelas chains do LangChain.
+
+Para adicionar conhecimento, basta colocar novos `.txt` em `data/corpus/` e rodar
+`python -m app.rag.indexer` de novo.
 
 ## Variáveis de ambiente
 
 | Variável | Padrão | Descrição |
 |---|---|---|
-| `OPENAI_API_KEY` | — | **Obrigatória.** Chave da OpenAI. |
-| `DATASET_CSV` | `data/TestPuc-Rio.csv` | Caminho do dataset. |
-| `GRADIO_SERVER_NAME` | `127.0.0.1` | Use `0.0.0.0` para expor na rede local. |
-| `GRADIO_SERVER_PORT` | `7860` | Porta da UI. |
-| `GRADIO_SHARE` | `false` | `true` gera um link público temporário. |
+| `DATASET_CSV` | `data/TestPuc-Rio.csv` | Caminho do dataset usado pelas tools. |
 
-## Exemplos de perguntas
+(O chatbot RAG **não** precisa de nenhuma chave de API.)
 
-- "Qual a taxa de entrega do Cliente IL257 - JA?"
-- "Qual a taxa da transportadora 189720 da rota jundiai - Sao Paulo associado ao Evento DIARIA - CARRET?"
-- "Quais os Top 5 ofensores associados ao Evento ENTREGA?"
+## Interface Gradio legada (opcional, usa OpenAI — fora do escopo)
 
-## Notas técnicas
-
-- O agente é construído com `langchain_openai.ChatOpenAI` + `create_csv_agent`
-  (OpenAI Functions), com `extra_tools` para as funções analíticas.
-- As regras do agente ficam em `app/config/rules.py` (`RULES`).
-- Nenhuma informação sensível fica no repositório. Credenciais vão no `.env` local
-  (que é ignorado pelo Git).
+A versão original em `app/ui/gradio_app.py` usa a API paga da OpenAI e **não** é
+necessária para os requisitos. Se quiser executá-la, defina `OPENAI_API_KEY` em um
+`.env` (veja `.env.example`) e rode `python -m app.ui.gradio_app`.

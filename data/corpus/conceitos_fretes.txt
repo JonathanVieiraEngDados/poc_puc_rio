@@ -1,0 +1,29 @@
+Conceitos de Fretes e Taxas Logísticas
+
+O que é a taxa de frete (R$/KG)
+A taxa de frete mede o custo de transporte por quilograma transportado. Ela é
+expressa em reais por quilo (R$/KG). Quanto menor a taxa, mais eficiente é a
+operação de transporte.
+
+Como a taxa R$/KG é calculada
+A taxa de um evento é calculada como a soma do valor de frete contábil previsto
+(coluna "Vr Frete Contab Prev") daquele evento, dividida pelo peso líquido total
+dos eventos do tipo ENTREGA. Em fórmula:
+
+    Taxa[Evento] = SOMA(Vr Frete Contab Prev do evento) / SOMA(Peso Líquido das ENTREGAS)
+
+Por que o denominador é sempre o peso de ENTREGA
+O peso líquido das ENTREGAS representa a quantidade efetivamente entregue ao
+cliente. Usar sempre esse mesmo denominador permite comparar o custo de
+diferentes eventos (entrega, diária, descarga, reentrega) sobre uma base única e
+estável de quilos entregues.
+
+O que é o Custo Total
+O Custo Total é a soma da coluna "Vr Frete Contab Prev" considerando os filtros
+aplicados (período, transportadora, tipo de operação). Diferente da taxa, o custo
+total é um valor absoluto em reais, não dividido pelo peso.
+
+Filtros opcionais
+A taxa e o custo podem ser calculados com filtros: por cliente, por rota
+(origem e destino), por transportadora, por tipo de operação (ZVPA ou ZTPA) e por
+intervalo de datas. Os filtros só devem ser aplicados quando solicitados.

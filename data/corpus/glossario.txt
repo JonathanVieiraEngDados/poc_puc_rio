@@ -1,0 +1,27 @@
+Glossário de Logística
+
+Ofensor: cliente, transportadora, rota ou cidade que concentra os maiores custos
+de frete. Os "Top N ofensores" são os N itens com maior custo total em uma
+categoria.
+
+Peso Líquido (kg): peso da mercadoria sem a embalagem ou o veículo, registrado na
+coluna "Qt Peso Líquido (kg)". É a base de quilos usada no cálculo das taxas.
+
+Vr Frete Contab Prev: valor de frete contábil previsto. É o valor usado como
+numerador no cálculo das taxas e na soma do custo total.
+
+Vr Frete a pagar: valor final de frete a ser pago à transportadora.
+
+Data Emissão: data de emissão do documento, usada para filtrar análises por
+período.
+
+Tipo de Carga: perfil da carga transportada (por exemplo, paletizada).
+
+Tipo de Frete: modalidade de contratação do frete (por exemplo, FOB ou CIF).
+
+Meio de Transporte: modal utilizado (por exemplo, rodoviário).
+
+Tipo de Veículo Principal: veículo predominante na operação (por exemplo, truck ou
+carreta).
+
+R$/KG: unidade da taxa de frete, reais por quilograma transportado.

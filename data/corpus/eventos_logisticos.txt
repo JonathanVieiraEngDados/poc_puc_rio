@@ -1,0 +1,29 @@
+Tipos de Eventos Logísticos
+
+ENTREGA
+A ENTREGA é o evento principal: representa a entrega da carga ao destinatário.
+O peso líquido das ENTREGAS é usado como denominador no cálculo de todas as taxas
+R$/KG. É o evento de referência da operação.
+
+DESCARGA
+A DESCARGA representa o descarregamento da mercadoria no ponto de destino ou em um
+centro de distribuição. Pode gerar custo adicional de frete dependendo do contrato
+com a transportadora.
+
+REENTREGA
+A REENTREGA ocorre quando a primeira tentativa de entrega falha (cliente ausente,
+recusa, endereço incorreto) e a carga precisa ser entregue novamente. É um evento
+de custo extra e costuma ser monitorado como indicador de ineficiência.
+
+DIARIA
+A DIARIA é a cobrança por tempo de espera ou permanência do veículo além do prazo
+previsto, por exemplo quando o caminhão fica parado aguardando carga ou descarga.
+
+DIARIA - CARRET
+A DIARIA - CARRET é a diária específica de veículos do tipo carreta. Representa o
+custo de permanência/espera de carretas e é tratada como um evento próprio nas
+análises de custo.
+
+Resumo
+Os eventos típicos do dataset são: ENTREGA, DESCARGA, REENTREGA, DIARIA e
+DIARIA - CARRET. Apenas a ENTREGA define o peso usado como denominador das taxas.

@@ -11,3 +11,9 @@ node_modules/
 data/*
 !data/generate_sample_data.py
 !data/TestPuc-Rio.csv
+# Keep the RAG text corpus tracked...
+!data/corpus/
+!data/corpus/*.txt
+# ...but ignore generated artifacts (rebuildable / runtime).
+data/faiss_index/
+data/history/
